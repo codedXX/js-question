@@ -30,6 +30,7 @@
                 const results = await Promise.all(
                     Array.from({ length: 10 }, (_, i) => fetchItem(i + 1))
                 );
+                console.log('results',results)
 
                 console.log(`全部成功，总耗时 ${Date.now() - start}ms\n`);
                 results.forEach(r => console.log(`  item ${r.id}  延迟 ${r.delay}ms  数据: ${r.data}`));
