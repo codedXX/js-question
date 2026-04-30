@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+
+        // 向 Express 服务发起实际 HTTP 请求
+        async function fetchItem(id) {
+            const res = await fetch(`http://localhost:3000/api/item/${id}`);
+            if (!res.ok) {
+                const { error } = await res.json();
+                throw new Error(error);
+            }
+            return res.json();
+        }
+
+        async function main() {
+            console.log('同时发起 10 个请求...\n');
+            const start = Date.now();
+
+            // 10 个请求同时发出，全部成功才 resolve，任一失败即 reject
+            try {
+                const results = await Promise.all(
+                    Array.from({ length: 10 }, (_, i) => fetchItem(i + 1))
+                );
+
+                console.log(`全部成功，总耗时 ${Date.now() - start}ms\n`);
+                results.forEach(r => console.log(`  item ${r.id}  延迟 ${r.delay}ms  数据: ${r.data}`));
+            } catch (err) {
+                console.error(`有请求失败，整体中断（总耗时 ${Date.now() - start}ms）`);
+                console.error(' ', err.message);
+            }
+        }
+
+        main();
+
+    </script>
+</body>
+
+</html>
